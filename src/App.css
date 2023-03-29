@@ -36,3 +36,22 @@
     transform: rotate(360deg);
   }
 }
+.notifications-item{
+  display: flex;
+  border-bottom: 1px solid #eee;
+  padding: 6px 9px;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+.notifications {
+  position: absolute;
+  top: 50px;
+  z-index: 2;
+  width: 300px;
+  height: auto;
+  max-height: 90vh;
+  overflow-y: scroll;
+  border-radius: 5px 0 5px 5px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+}
