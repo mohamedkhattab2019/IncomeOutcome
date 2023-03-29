@@ -7,11 +7,8 @@ import api from '../api/items'
 
 
 
-const HeaderAll = ({ userData, userChildrenData }: any): JSX.Element => {
-    console.log(userData && userData)
+const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.Element => {
     const navigate = useNavigate()
-    console.log(userChildrenData)
-
     const [HasMyAuthNames, setHasMyAuthNames] = useState<any>()
     const UserId:any= localStorage.getItem(`Main_user_id`)
     const HasMyAuth = async () => {
@@ -19,7 +16,6 @@ const HeaderAll = ({ userData, userChildrenData }: any): JSX.Element => {
          bodyHasAuthFormData.append('user_id', UserId && UserId);
         const HasAuthResponse = await api.post(`/postSystem/who_has_my_auth.php`, bodyHasAuthFormData
             , { headers: { 'Content-Type': 'multipart/form-data' } })
-        console.log(HasAuthResponse.data)
         setHasMyAuthNames(HasAuthResponse.data)
     }
 
@@ -37,11 +33,20 @@ const HeaderAll = ({ userData, userChildrenData }: any): JSX.Element => {
             const TempSitenameResponse = await api.post(`/postSystem/temp_site_name.php`, bodyTempSiteNameFormData
                 , { headers: { 'Content-Type': 'multipart/form-data' } })
     
-                console.log(TempSitenameResponse.data)
+                // console.log(TempSitenameResponse.data)
             setTempSiteName(TempSitenameResponse.data[0].user_name)
         }else{
 
         }
+    }
+    const setNotificationRead = async ( IncomeNo:string) => {
+        let bodyNotificationFormData = new FormData();
+        bodyNotificationFormData.append('depart_id', userData && userData.depart_id);
+        bodyNotificationFormData.append('Income_ID', IncomeNo);
+
+        const SwitchResponse = await api.post(`/postSystem/update_notification_read.php`, bodyNotificationFormData
+            , { headers: { 'Content-Type': 'multipart/form-data' } })
+
     }
 
     useEffect(() => {
@@ -141,6 +146,16 @@ const HeaderAll = ({ userData, userChildrenData }: any): JSX.Element => {
                         <p className='text-md font-medium text-[#05351b]'>
                             {userData ? userData.user_name : ``}
                         </p>
+                        
+                        <ul className='notifications'>
+                        <li  className='notifications-item'>Notification{ NotificationIncome ? NotificationIncome.length : ''}</li>
+                            {NotificationIncome && NotificationIncome.length > 0 && NotificationIncome.map((item: any, index: any) => {
+                                            return (
+                                                <li  onClick={()=>setNotificationRead(item.Income_ID)} className='notifications-item' key={index} value={item.Income_ID}>{item.Income_Subject}</li>
+                                            )
+                                        })}
+                          
+                        </ul>
                         <img
                             className="h-8 w-auto "
                             src="http://localhost:80/postSystem/Avatar.png"

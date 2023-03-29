@@ -10,7 +10,8 @@ const ConsumerPage = () => {
     const navigate = useNavigate()
 
 
-
+    const [unreadCounter, setUnreadCounter] = useState<any>(0)
+    const [unreadNotificationIncome, setUnreadNotificationIncome] = useState<any>([])
     const [DataIncomes, setDataIncomes] = useState<any>([])
     const Click = (ProcessNum: string) => {
 
@@ -24,12 +25,12 @@ const ConsumerPage = () => {
 
 
     const GetUserDep = async () => {
-        console.log(userId)
+        // console.log(userId)
         let bodyFormData = new FormData();
         bodyFormData.append('user_id', userId);
         const response = await api.post(`/postSystem/get_user_dep.php`, bodyFormData
             , { headers: { 'Content-Type': 'multipart/form-data' } })
-        console.log(response.data[0])
+        // console.log(response.data[0])
         setUserData(response.data[0])
         response.data[0] && response.data[0].role === `1` ? navigate(`/Distributer`) : response.data[0].role === `3` ? navigate(`/Form`) : response.data[0].role === `0` ? navigate(`/Consumer`) : console.log(`aa`)
 
@@ -47,7 +48,7 @@ const ConsumerPage = () => {
         bodyChildrenFormData.append('depart_id', response.data[0].depart_id);
         const ChildrenResponse = await api.post(`/postSystem/get_temp_users.php`, bodyChildrenFormData
             , { headers: { 'Content-Type': 'multipart/form-data' } })
-        console.log(ChildrenResponse.data)
+        // console.log(ChildrenResponse.data)
         setUserChildrenData(ChildrenResponse.data)
     }
 
@@ -68,10 +69,19 @@ const ConsumerPage = () => {
 
 
     const getDataIncomes = async () => {
-        const response = await api.get(`/postSystem/get_manager_assigned_income.php`)
-        console.log(response.data)
+        let bodyFormData = new FormData();
+        bodyFormData.append('user_id', userId);
+        const UserResponse = await api.post(`/postSystem/get_user_dep.php`, bodyFormData
+            , { headers: { 'Content-Type': 'multipart/form-data' } });
+        const userResponse1 =  UserResponse.data[0]  
+        let depData = new FormData();
+        depData.append('depart_id', userResponse1.depart_id);
+
+        const response = await api.post(`/postSystem/get_manager_assigned_income.php`, depData
+            , { headers: { 'Content-Type': 'multipart/form-data' } })
         setDataIncomes(response.data)
-        console.log(response.data)
+        setUnreadNotificationIncome(response.data.filter((inc: any) => inc.notification_read == 0))
+        setUnreadCounter(response.data.filter((inc: any) => inc.notification_read == 0).length);
     }
 
     const [textArea, setTextArea] = useState<any>()
@@ -83,13 +93,14 @@ const ConsumerPage = () => {
         UpdateData.append('Action_text', textArea);
         const response = await api.post(`/postSystem/insert_manager_asigned_income.php`, UpdateData
             , { headers: { 'Content-Type': 'multipart/form-data' } })
-        console.log(response.data)
+        // console.log(response.data)
 
         //ٌRender Data Incomes
         getDataIncomes()
 
 
     }
+
 
 
     useEffect(() => {
@@ -100,6 +111,10 @@ const ConsumerPage = () => {
             getUrgentState()
             GetUserDep()
             getDataIncomes()
+             const  number = setInterval(() => {
+                // Send GET request to PHP script to check for new notifications
+                getDataIncomes()
+              },5000); 
         }
     }, [navigate])
 
@@ -108,12 +123,12 @@ const ConsumerPage = () => {
     const ShowManagerDirectory = (Income_No:any)=>{
         setShowThirdModal(true)
         setMangerDirOrderShow(userData !== undefined && DataIncomes.filter((DataItem: any) => DataItem.Assigned_To === userData.depart_id && DataItem.Income_No === Income_No)[0])
-        console.log(MangerDirOrderShow)
+        // console.log(MangerDirOrderShow)
     }
 
     return (
         <div className='max-w-[100%] m-auto p-4 h-[100%]'>
-            <HeaderAll userData={userData} userChildrenData={userChildrenData} />
+            <HeaderAll NotificationIncome={unreadNotificationIncome} userData={userData} userChildrenData={userChildrenData} />
             <div className="flex flex-col">
                 <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="py-4 inline-block min-w-full sm:px-6 lg:px-8">
@@ -162,7 +177,7 @@ const ConsumerPage = () => {
                                 <tbody>
                                     {
                                         // userParentData !== undefined && userData !== undefined && DataIncomes.filter((DataItem: any) => DataItem.Assigned_To === userData.depart_id || DataItem.Assigned_To === userParentData && userParentData !== `1` && userParentData !== `2` && userParentData !== `3`).length > 0 ? DataIncomes.filter((DataItem: any) => DataItem.Assigned_To === userData.depart_id || DataItem.Assigned_To === userParentData && userParentData !== `1` && userParentData !== `2` && userParentData !== `3`).map((item: any, index: any) => {
-                                             userData !== undefined && DataIncomes.filter((DataItem: any) => DataItem.Assigned_To === userData.depart_id ).length > 0 ? DataIncomes.filter((DataItem: any) => DataItem.Assigned_To === userData.depart_id ).map((item: any, index: any) => {
+                                             userData !== undefined && DataIncomes.length > 0 ? DataIncomes.map((item: any, index: any) => {
                                       
                                             return (
                                                 <tr key={index} className={`${item.Action_text===null ? `bg-[#a02222]` : `bg-[#8a8989]` } border-b-[2px] border-[black]`}>
