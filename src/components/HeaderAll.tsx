@@ -7,13 +7,13 @@ import api from '../api/items'
 
 
 
-const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.Element => {
+const HeaderAll = ({ NotificationIncome, userData, userChildrenData }: any): JSX.Element => {
     const navigate = useNavigate()
     const [HasMyAuthNames, setHasMyAuthNames] = useState<any>()
-    const UserId:any= localStorage.getItem(`Main_user_id`)
+    const UserId: any = localStorage.getItem(`Main_user_id`)
     const HasMyAuth = async () => {
         let bodyHasAuthFormData = new FormData();
-         bodyHasAuthFormData.append('user_id', UserId && UserId);
+        bodyHasAuthFormData.append('user_id', UserId && UserId);
         const HasAuthResponse = await api.post(`/postSystem/who_has_my_auth.php`, bodyHasAuthFormData
             , { headers: { 'Content-Type': 'multipart/form-data' } })
         setHasMyAuthNames(HasAuthResponse.data)
@@ -27,19 +27,19 @@ const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.
         setTempUserData(SwitchResponse.data[0])
 
         ///Site Name
-        if(SwitchResponse.data[0].user_temp_id!==null){
+        if (SwitchResponse.data[0].user_temp_id !== null) {
             let bodyTempSiteNameFormData = new FormData();
             bodyTempSiteNameFormData.append('user_id', SwitchResponse.data[0].user_temp_id);
             const TempSitenameResponse = await api.post(`/postSystem/temp_site_name.php`, bodyTempSiteNameFormData
                 , { headers: { 'Content-Type': 'multipart/form-data' } })
-    
-                // console.log(TempSitenameResponse.data)
+
+            // console.log(TempSitenameResponse.data)
             setTempSiteName(TempSitenameResponse.data[0].user_name)
-        }else{
+        } else {
 
         }
     }
-    const setNotificationRead = async ( IncomeNo:string) => {
+    const setNotificationRead = async (IncomeNo: string) => {
         let bodyNotificationFormData = new FormData();
         bodyNotificationFormData.append('depart_id', userData && userData.depart_id);
         bodyNotificationFormData.append('Income_ID', IncomeNo);
@@ -61,16 +61,16 @@ const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.
         navigate(`/`)
     }
 
-    const DeleteAuth = async (UserId:any)=>{
+    const DeleteAuth = async (UserId: any) => {
         let bodySwitchFormData = new FormData();
         bodySwitchFormData.append('user_id', UserId);
         await api.post(`/postSystem/update_temp_user_id.php`, bodySwitchFormData, { headers: { 'Content-Type': 'multipart/form-data' } })
 
-        setHasMyAuthNames(HasMyAuthNames.filter((item:any)=>item.user_id !== UserId))
+        setHasMyAuthNames(HasMyAuthNames.filter((item: any) => item.user_id !== UserId))
     }
 
     const [AuthToChild, setAuthToChild] = useState<any>()
-
+    const [ShowNotification, setShowNotification] = useState<any>(false)
     const GiveAuthToChild = async () => {
         let bodySwitchFormData = new FormData();
         bodySwitchFormData.append('user_id', userData && userData.user_id);
@@ -97,16 +97,16 @@ const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.
         navigate(0)
     }
 
-    const BackFromManager=()=>{
-        const OldUserId:any = localStorage.getItem(`Main_user_temp`) 
+    const BackFromManager = () => {
+        const OldUserId: any = localStorage.getItem(`Main_user_temp`)
         localStorage.setItem(`Main_user_id`, OldUserId && OldUserId)
         localStorage.setItem(`Main_user_temp`, ``)
 
         navigate(`/Consumer`)
     }
 
-    const Back=()=>{
-        const OldUserId:any = localStorage.getItem(`Main_user_temp`) 
+    const Back = () => {
+        const OldUserId: any = localStorage.getItem(`Main_user_temp`)
         localStorage.setItem(`Main_user_id`, OldUserId && OldUserId)
         localStorage.setItem(`Main_user_temp`, ``)
 
@@ -131,6 +131,35 @@ const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.
     return (
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="flex items-center justify-between border-b-2 border-gray-100 pt-2 ">
+
+                <div className='relative border border-solid '>
+                    <div onClick={() => { setShowNotification(!ShowNotification) }} className='relative cursor-pointer'>
+                        <img
+                            className="h-16 w-auto "
+                            src="http://localhost:80/postSystem/Alert_Icon.png"
+                            alt="Alert_Icon"
+                        />
+                        <div className='absolute bottom-0 right-0 rounded-full w-[30px] h-[30px] bg-[#c90b0b] text-[20px] font-bold'>{(NotificationIncome && NotificationIncome.length>0) ? NotificationIncome.length : 0}</div>
+                    </div>
+                    {ShowNotification ? (
+                        <div className='absolute top-[70px] translate-x-[50%] bg-white w-max z-20 right-0 border-[3px] p-3 border-solid border-[#05351b] rounded-lg'>{
+                            (NotificationIncome && NotificationIncome.length) > 0 ? NotificationIncome.map((item: any, index: any) => {
+                                return (
+                                    <>
+                                        <p onClick={() => {
+                                            setNotificationRead(item.Income_ID)
+                                            setShowNotification(false)
+                                        }} className='bg-[#05351b] mb-2 px-4 py-1 rounded-lg text-[16px] font-normal text-white cursor-pointer' key={index} >{item.Income_Subject}</p>
+                                        {/* <p onClick={() => setNotificationRead(item.Income_ID)} className='bg-[#05351b] mb-2 px-4 py-1 rounded-lg text-[16px] font-bold text-white cursor-pointer' key={index} >asdsadasd asdsadasd asdasdas asd asdsadasd asdsadasd</p> */}
+                                    </>
+                                )
+                            }):(
+                                <p className='bg-[#05351b] mb-2 px-4 py-1 rounded-lg text-[16px] font-normal text-white'>لا توجد إشعارات جديدة</p>
+                            )}
+                        </div>
+                    ) : null}
+
+                </div>
                 <div className="items-center justify-start flex:1">
                     <button onClick={Signout} className=" rounded-[12px] whitespace-nowrap p-2 bg-[#c90b0b] text-white active:bg-white active:text-[#c90b0b]">
                         تسجيل الخروج
@@ -146,16 +175,8 @@ const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.
                         <p className='text-md font-medium text-[#05351b]'>
                             {userData ? userData.user_name : ``}
                         </p>
-                        
-                        <ul className='notifications'>
-                        <li  className='notifications-item'>Notification{ NotificationIncome ? NotificationIncome.length : ''}</li>
-                            {NotificationIncome && NotificationIncome.length > 0 && NotificationIncome.map((item: any, index: any) => {
-                                            return (
-                                                <li  onClick={()=>setNotificationRead(item.Income_ID)} className='notifications-item' key={index} value={item.Income_ID}>{item.Income_Subject}</li>
-                                            )
-                                        })}
-                          
-                        </ul>
+
+
                         <img
                             className="h-8 w-auto "
                             src="http://localhost:80/postSystem/Avatar.png"
@@ -166,7 +187,7 @@ const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.
                         userData && userData.user_id.slice(0, 3) === `LSO` && userData.role !== `1` ? (
                             <div>
                                 <div className='flex:1 flex flex-row flex-end items-center justify-center gap-[10px] ' >
-                                    <button onClick={GiveAuthToChild} hidden={HasMyAuthNames?.length===1 ? true : false} className=" rounded-[12px] whitespace-nowrap p-1 px-2 bg-[#05351b] text-white">
+                                    <button onClick={GiveAuthToChild} hidden={HasMyAuthNames?.length === 1 ? true : false} className=" rounded-[12px] whitespace-nowrap p-1 px-2 bg-[#05351b] text-white">
                                         إعطاء الصلاحية
                                     </button>
                                     <select onChange={(e) => { setAuthToChild(e.target.value) }} id='Role' className='border-2 font-bold text-[#05351b] border-[#05351b] rounded-[12px] shadow-lg p-1 my-2 text-center'>
@@ -180,11 +201,11 @@ const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.
                                 </div>
                                 {HasMyAuthNames && HasMyAuthNames.length > 0 ? (
                                     <div className='flex:1 flex flex-col gap-[10px] flex-end items-center justify-center border-2 border-[#05351b] rounded-[12px] p-2 ' >
-                                            {
+                                        {
                                             HasMyAuthNames.map((item: any, index: any) => {
                                                 return (
                                                     <div key={index} className='flex:1 flex flex-row flex-end items-center justify-center'>
-                                                        <button onClick={()=>{DeleteAuth(item.user_id)}} className=" rounded-[12px] whitespace-nowrap p-1 px-2 mr-2 bg-[#972a2a] text-white">حذف الإنابة</button>
+                                                        <button onClick={() => { DeleteAuth(item.user_id) }} className=" rounded-[12px] whitespace-nowrap p-1 px-2 mr-2 bg-[#972a2a] text-white">حذف الإنابة</button>
                                                         <p className='font-bold text-[#05351b]'>{item.user_name}</p>
                                                     </div>
                                                 )
@@ -197,35 +218,35 @@ const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.
                                 {tempUserData && tempUserData.user_temp_id !== null ? (
                                     <div className='flex:1 flex flex-row flex-end items-center justify-end gap-[10px] ' >
                                         <button onClick={SwitchToParent} className=" rounded-[12px] whitespace-nowrap p-1 px-2 bg-[#05351b] text-white">
-                                       تحويل الى { tempSiteName && tempSiteName} 
+                                            تحويل الى {tempSiteName && tempSiteName}
                                         </button>
                                     </div>
                                 ) : null}
                                 {
-                                    localStorage.getItem(`Main_user_temp`)!== `` ? (
+                                    localStorage.getItem(`Main_user_temp`) !== `` ? (
                                         <div className='flex:1 flex flex-row flex-end items-center justify-end gap-[10px] ' >
-                                        <button onClick={Back} className=" rounded-[12px] whitespace-nowrap p-1 px-2 bg-[#05351b] text-white">
-                                            عودة من الصلاحية
-                                        </button>
-                                    </div>
-                                    ):null
+                                            <button onClick={Back} className=" rounded-[12px] whitespace-nowrap p-1 px-2 bg-[#05351b] text-white">
+                                                عودة من الصلاحية
+                                            </button>
+                                        </div>
+                                    ) : null
                                 }
 
                             </div>
                         ) : userData && userData.role === `1` ? (
                             <div className='flex:1 flex flex-col flex-end items-center justify-center gap-[10px] ' >
-                            <div className='flex:1 flex flex-row flex-end items-center justify-center gap-[10px] ' >
-                                <button onClick={GiveAuthToChild} hidden={HasMyAuthNames?.length===1 ? true : false} className=" rounded-[12px] whitespace-nowrap p-1 px-2 bg-[#05351b] text-white">
-                                    إعطاء الصلاحية
-                                </button>
-                                <select onChange={(e) => { setAuthToChild(e.target.value) }} id='Role' className='border-2 font-bold text-[#05351b] border-[#05351b] rounded-[12px] shadow-lg p-1 my-2 text-center'>
-                                    {userChildrenData && userChildrenData.length > 0 && userChildrenData.map((item: any, index: any) => {
-                                        return (
-                                            <option key={index} value={item.user_id}>{item.user_name}</option>
-                                        )
-                                    })}
-                                </select>
-                                <label htmlFor="Role" className='text-lg font-bold text-[#05351b]'>الإنابة</label>
+                                <div className='flex:1 flex flex-row flex-end items-center justify-center gap-[10px] ' >
+                                    <button onClick={GiveAuthToChild} hidden={HasMyAuthNames?.length === 1 ? true : false} className=" rounded-[12px] whitespace-nowrap p-1 px-2 bg-[#05351b] text-white">
+                                        إعطاء الصلاحية
+                                    </button>
+                                    <select onChange={(e) => { setAuthToChild(e.target.value) }} id='Role' className='border-2 font-bold text-[#05351b] border-[#05351b] rounded-[12px] shadow-lg p-1 my-2 text-center'>
+                                        {userChildrenData && userChildrenData.length > 0 && userChildrenData.map((item: any, index: any) => {
+                                            return (
+                                                <option key={index} value={item.user_id}>{item.user_name}</option>
+                                            )
+                                        })}
+                                    </select>
+                                    <label htmlFor="Role" className='text-lg font-bold text-[#05351b]'>الإنابة</label>
                                 </div>
                                 {HasMyAuthNames && HasMyAuthNames.length > 0 ? (
                                     <div className='flex:1 flex flex-col gap-[10px] flex-end items-center justify-center border-2 border-[#05351b] rounded-[12px] p-2 ' >
@@ -233,7 +254,7 @@ const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.
                                             HasMyAuthNames.map((item: any, index: any) => {
                                                 return (
                                                     <div key={index} className='flex:1 flex flex-row flex-end items-center justify-center'>
-                                                        <button onClick={()=>{DeleteAuth(item.user_id)}} className=" rounded-[12px] whitespace-nowrap p-1 px-2 mr-2 bg-[#972a2a] text-white">حذف الإنابة</button>
+                                                        <button onClick={() => { DeleteAuth(item.user_id) }} className=" rounded-[12px] whitespace-nowrap p-1 px-2 mr-2 bg-[#972a2a] text-white">حذف الإنابة</button>
                                                         <p className='font-bold text-[#05351b]'>{item.user_name}</p>
                                                     </div>
                                                 )
@@ -243,14 +264,14 @@ const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.
 
                                 ) : null
                                 }
-                                     {
-                                    localStorage.getItem(`Main_user_temp`)!== `` ? (
+                                {
+                                    localStorage.getItem(`Main_user_temp`) !== `` ? (
                                         <div className='flex:1 flex flex-row flex-end items-center justify-end gap-[10px] ' >
-                                        <button onClick={BackFromManager} className=" rounded-[12px] whitespace-nowrap p-1 px-2 bg-[#05351b] text-white">
-                                        عودة من الصلاحية
-                                        </button>
-                                    </div>
-                                    ):null
+                                            <button onClick={BackFromManager} className=" rounded-[12px] whitespace-nowrap p-1 px-2 bg-[#05351b] text-white">
+                                                عودة من الصلاحية
+                                            </button>
+                                        </div>
+                                    ) : null
                                 }
                             </div>
                         ) : userData && (userData.user_id.slice(0, 3) === `LSE` || userData.user_id.slice(0, 3) === `LSX`) ? (
@@ -258,7 +279,7 @@ const HeaderAll = ({NotificationIncome, userData, userChildrenData }: any): JSX.
                                 {tempUserData && tempUserData.user_temp_id !== null ? (
                                     <div className='flex:1 flex flex-row flex-end items-center justify-end gap-[10px] ' >
                                         <button onClick={SwitchToParent} className=" rounded-[12px] whitespace-nowrap p-1 px-2 bg-[#05351b] text-white">
-                                        تحويل الى { tempSiteName && tempSiteName} 
+                                            تحويل الى {tempSiteName && tempSiteName}
                                         </button>
                                     </div>
                                 ) : null}

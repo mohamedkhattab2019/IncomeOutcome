@@ -206,7 +206,7 @@ const DistributerPage = () => {
                                     {
                                         Incomes.length > 0 && Incomes.map((item: any, index: any) => {
                                             return (
-                                                <tr key={index} className="bg-[#8a8989] border-b-[2px] border-[black]">
+                                                <tr key={index} className={`${item.Action_text===null ? `bg-[#a02222]` : `bg-[#8a8989]` }  border-b-[2px] border-[black]`}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                         <button onClick={() => { ShowButton(item.Income_ID) }} className='border rounded-[12px] bg-[#614405] shadow-lg p-[10px] w-content  text-center text-white font-bold ' >عرض</button>
                                                         <button onClick={() => AddClick(item.Income_No, item.Income_ID)} className='border rounded-[12px] bg-[#0e1555] shadow-lg p-[10px] w-content ml-2  text-center text-white font-bold ' >إضافه</button>
