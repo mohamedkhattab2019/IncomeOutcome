@@ -30,6 +30,7 @@ const DistributerPage = () => {
         setTextArea(``)
     }
 
+    const [managerUnSeenNotificationIncome, setUnSeenNotificationIncome] = useState<any>([])
 
 
     const [Incomes, setIncomes] = useState<any>([])
@@ -37,6 +38,8 @@ const DistributerPage = () => {
         const response = await api.get(`/postSystem/get_incomes.php`)
         setIncomes(response.data)
         console.log(response.data)
+        setUnSeenNotificationIncome(response.data.filter((inc: any) => inc.seen_by_manager == 0))
+
     }
 
     const [SecretStatusArray, setSecretStatusArray] = useState<any>([])
@@ -162,13 +165,17 @@ const DistributerPage = () => {
             GetUserDep()
             getDepartments()
             getActionType()
+            const  number = setInterval(() => {
+                // Send GET request to PHP script to check for new notifications
+                getIncomesData()
+              },5000); 
         }
     }, [navigate])
 
 
     return (
         <div className='max-w-[100%] m-auto p-4 h-[100%] overflow-scroll'>
-            <HeaderAll userData={userData} userChildrenData={userChildrenData} />
+            <HeaderAll  NotificationIncome={managerUnSeenNotificationIncome} userData={userData} userChildrenData={userChildrenData} />
             <div className="flex flex-col">
                 <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="py-4 inline-block min-w-full sm: lg:px-8">
