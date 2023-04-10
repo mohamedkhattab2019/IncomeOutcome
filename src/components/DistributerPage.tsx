@@ -177,8 +177,8 @@ const DistributerPage = () => {
         <div className='max-w-[100%] m-auto p-4 h-[100%] overflow-scroll'>
             <HeaderAll  NotificationIncome={managerUnSeenNotificationIncome} userData={userData} userChildrenData={userChildrenData} />
             <div className="flex flex-col">
-                <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div className="py-4 inline-block min-w-full sm: lg:px-8">
+                <div className="overflow-x-auto ">
+                    <div className="py-4 inline-block min-w-full ">
                         <div className=" overflow-y-auto h-[450px]">
                             <table className="min-w-full text-center">
                                 <thead className="border-b sticky bg-[#05351b]">

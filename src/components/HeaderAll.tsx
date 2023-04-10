@@ -6,7 +6,6 @@ import api from '../api/items'
 
 
 
-
 const HeaderAll = ({ NotificationIncome, userData, userChildrenData }: any): JSX.Element => {
     const navigate = useNavigate()
     const [HasMyAuthNames, setHasMyAuthNames] = useState<any>()
@@ -142,14 +141,14 @@ const HeaderAll = ({ NotificationIncome, userData, userChildrenData }: any): JSX
                         <div className='absolute bottom-0 right-0 rounded-full w-[30px] h-[30px] bg-[#c90b0b] text-[20px] font-bold'>{(NotificationIncome && NotificationIncome.length>0) ? NotificationIncome.length : 0}</div>
                     </div>
                     {ShowNotification ? (
-                        <div className='absolute top-[70px] translate-x-[50%] bg-white w-max z-20 right-0 border-[3px] p-3 border-solid border-[#05351b] rounded-lg'>{
+                        <div className='absolute top-[70px] left-0 bg-white w-max z-20 right-0 border-[3px] p-3 border-solid border-[#05351b] rounded-lg'>{
                             (NotificationIncome && NotificationIncome.length) > 0 ? NotificationIncome.map((item: any, index: any) => {
                                 return (
                                     <>
                                         <p onClick={() => {
                                             setNotificationRead(item.Income_ID)
                                             setShowNotification(false)
-                                        }} className='bg-[#05351b] mb-2 px-4 py-1 rounded-lg text-[16px] font-normal text-white cursor-pointer' key={index} >{item.Income_Subject}</p>
+                                        }} className='text-end bg-[#05351b] w-[350px] break-words mb-2 px-4 py-1 rounded-lg text-[16px] font-normal text-white cursor-pointer' key={index} >{item.Income_Subject}</p>
                                         {/* <p onClick={() => setNotificationRead(item.Income_ID)} className='bg-[#05351b] mb-2 px-4 py-1 rounded-lg text-[16px] font-bold text-white cursor-pointer' key={index} >asdsadasd asdsadasd asdasdas asd asdsadasd asdsadasd</p> */}
                                     </>
                                 )

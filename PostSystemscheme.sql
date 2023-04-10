@@ -213,6 +213,15 @@ CREATE TABLE `outcome` (
   PRIMARY KEY (`Outcome_ID`)
 );
 
+ALTER TABLE `post_system`.`manager_assigned` 
+ADD COLUMN `notification_read` TINYINT NULL DEFAULT 0 AFTER `manager_assigned_text`;
+
+ALTER TABLE `post_system`.`income` 
+ADD COLUMN `seen_by_manager` TINYINT NOT NULL DEFAULT 0 AFTER `from_user_id`;
+
+
+
+
 -- view manager assigned income لعرض الوارد و مسار توزيعه  --
 CREATE  VIEW `manager_assigned_income` AS
  select `income`.`Income_ID` AS `Income_ID`,`income`.`Income_No` AS `Income_No`,`income`.`Income_Subject` AS `Income_Subject`
@@ -238,13 +247,6 @@ select `users`.`user_id` AS `user_id`,`users`.`user_temp_id` AS `user_temp_id`,`
 	,`departments`.`depart_parent_id` AS `depart_parent_id`,`departments`.`department` AS `department`,`department_users`.`role` AS `role`
  from ((`users` join `department_users` on((`department_users`.`user_id` = `users`.`user_id`))) 
 	join `departments` on((`departments`.`depart_id` = `department_users`.`department_ID`)));    
-
-ALTER TABLE `post_system`.`manager_assigned` 
-ADD COLUMN `notification_read` TINYINT NULL DEFAULT 0 AFTER `read_notification`;
-
-ALTER TABLE `post_system`.`income` 
-ADD COLUMN `seen_by_manager` TINYINT NOT NULL DEFAULT 0 AFTER `from_user_id`;
-
 
 Update`post_system`.`income`  SET `seen_by_manager`= 1 ;
 
