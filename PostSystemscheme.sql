@@ -241,4 +241,11 @@ select `users`.`user_id` AS `user_id`,`users`.`user_temp_id` AS `user_temp_id`,`
 
 ALTER TABLE `post_system`.`manager_assigned` 
 ADD COLUMN `notification_read` TINYINT NULL DEFAULT 0 AFTER `read_notification`;
+
+ALTER TABLE `post_system`.`income` 
+ADD COLUMN `seen_by_manager` TINYINT NOT NULL DEFAULT 0 AFTER `from_user_id`;
+
+
+Update`post_system`.`income`  SET `seen_by_manager`= 1 ;
+
     
