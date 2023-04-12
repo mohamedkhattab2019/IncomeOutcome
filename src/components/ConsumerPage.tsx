@@ -180,7 +180,7 @@ const ConsumerPage = () => {
                                              userData !== undefined && DataIncomes.length > 0 ? DataIncomes.map((item: any, index: any) => {
                                       
                                             return (
-                                                <tr key={index} className={`${item.Action_text===null ? `bg-[#a02222]` : `bg-[#8a8989]` } border-b-[2px] border-[black]`}>
+                                                <tr key={index} className={`${item.Action_text===null ? `bg-[#ff1515]` : `bg-[#8a8989]` } opacity-90 border-b-[2px] border-[black]`}>
                                                     <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                         <button disabled={(item.Action_text !== null || userData.role!==`2`) ? true : false}  onClick={() => { Update(item.Income_ID, userData.depart_id, textArea) }} className={`border rounded-[12px] ${(item.Action_text !== null || userData.role!==`2`) ? `bg-[#5bb485]` : `bg-[#05351b]`}  shadow-lg p-[5px] w-content mt-2 text-center text-white font-bold `} >إرسال</button>
                                                     </td>
